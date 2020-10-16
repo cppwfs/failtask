@@ -1,0 +1,53 @@
+= FailApp Task
+
+This is a simple task app that prints a funny message.
+
+== Requirements:
+
+* Java 8 or Above
+
+== Classes:
+
+* FailTaskApplication - the Spring Boot Main Application
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/failtask-0.0.1-SNAPSHOT.jar
+----
+
+== Build Docker image (no build pack) :
+
+[source,shell,indent=2]
+----
+docker build -t cppwfs/failtasknbp .
+----
+
+== Run  Docker image (no build pack) :
+
+[source,shell,indent=2]
+----
+docker run cppwfs/failtasknbp run.id\(long\)=1
+----
+
+== Build Docker image (build pack) :
+
+[source,shell,indent=2]
+----
+./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=cppwfs/failtask
+----
+
+== Run  Docker image (build pack) :
+
+[source,shell,indent=2]
+----
+docker run cppwfs/failtask run.id\(long\)=1
+----
