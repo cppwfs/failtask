@@ -1,6 +1,6 @@
 = FailApp Task
 
-This is a simple task app that prints a funny message.
+This is a simple task app that prints the command line args to the console.
 
 == Requirements:
 
@@ -24,6 +24,87 @@ $ mvn clean package
 $ java -jar target/failtask-0.0.1-SNAPSHOT.jar
 ----
 
+== Build Docker image (boot/pack) :
+
+[source,shell,indent=2]
+----
+mvn spring-boot:build-image -Dspring-boot.build-image.imageName=cppwfs/failtask:latest
+----
+
+== Run  Docker image all values passed in correctly (boot/pack) :
+
+[source,shell,indent=2]
+----
+docker run cppwfs/failtask:latest --xxx1=ddd1 --foo=\\\${bar}-\\\${jee} --xxx2=ddd2
+----
+
+== Run  Docker image all values passed *Fails* (boot/pack) :
+
+[source,shell,indent=2]
+----
+docker run cppwfs/failtask:latest --xxx1=ddd1 --foo=${bar}-${jee} --xxx2=ddd2
+----
+
+== Run Task on Dataflow Kubernetes Platform
+
+[source,shell,indent=2]
+----
+dataflow:>dataflow config server <myserver>
+Successfully targeted <myserver>
+dataflow:>app register --name mytask --type task --uri docker:cppwfs/failtask:latest
+dataflow:>task create --name mytaskdef --definition "mytask"
+Created new task 'mytaskdef'
+dataflow:>task launch mytaskdef
+Launched task 'mytaskdef' with execution id 310
+dataflow:>task execution status --id 311
+╔══════════════╤══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║     Key      │                                                                                                                  Value                                                                                                                   ║
+╠══════════════╪══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║Id            │311                                                                                                                                                                                                                                       ║
+║Resource URL  │Docker Resource [docker:cppwfs/failtask:latest]                                                                                                                                                                                           ║
+║Name          │mytaskdef                                                                                                                                                                                                                                 ║
+║CLI Arguments │[--management.metrics.tags.service=task-application, --spring.datasource.username=******, --management.metrics.export.prometheus.enabled=true, --spring.datasource.url=******,                                                            ║
+║              │--spring.datasource.driverClassName=org.mariadb.jdbc.Driver, , --management.metrics.export.prometheus.rsocket.port=7001, --management.metrics.export.prometheus.rsocket.enabled=true, --spring.cloud.task.name=mytaskdef,                 ║
+║              │--management.metrics.export.prometheus.rsocket.host=prometheus-proxy, --spring.datasource.password=******, --spring.cloud.task.executionid=311]                                                                                           ║
+║App Arguments │                     management.metrics.tags.service = task-application                                                                                                                                                                   ║
+║              │                          spring.datasource.username = ******                                                                                                                                                                             ║
+║              │        management.metrics.export.prometheus.enabled = true                                                                                                                                                                               ║
+║              │                               spring.datasource.url = ******                                                                                                                                                                             ║
+║              │                   spring.datasource.driverClassName = org.mariadb.jdbc.Driver                                                                                                                                                            ║
+║              │                 management.metrics.tags.application = ${task.name:unknown}-${task.execution.id:unknown}                                                                                                                                  ║
+║              │   management.metrics.export.prometheus.rsocket.port = 7001                                                                                                                                                                               ║
+║              │management.metrics.export.prometheus.rsocket.enabled = true                                                                                                                                                                               ║
+║              │                              spring.cloud.task.name = mytaskdef                                                                                                                                                                          ║
+║              │   management.metrics.export.prometheus.rsocket.host = prometheus-proxy                                                                                                                                                                   ║
+║              │                          spring.datasource.password = ******                                                                                                                                                                             ║
+║Deployment    │                                                                                                                                                                                                                                          ║
+║Properties    │                                                                                                                                                                                                                                          ║
+║Job Execution │[]                                                                                                                                                                                                                                        ║
+║Ids           │                                                                                                                                                                                                                                          ║
+║Start Time    │Mon Oct 26 14:21:53 EDT 2020                                                                                                                                                                                                              ║
+║End Time      │Mon Oct 26 14:21:53 EDT 2020                                                                                                                                                                                                              ║
+║Exit Code     │0                                                                                                                                                                                                                                         ║
+║Exit Message  │                                                                                                                                                                                                                                          ║
+║Error Message │                                                                                                                                                                                                                                          ║
+║External      │mytaskdef-yg3e5d5w14                                                                                                                                                                                                                      ║
+║Execution Id  │
+----
+NOTE: That while dataflow sends the `management.metrics.tags.application` as a property it gets converted to a command line arg that is not accepted by the application being run.   This is because data flow by default uses the entrypoint `exec` wthich moves all properties to commandline args.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 == Build Docker image (no build pack) :
 
 [source,shell,indent=2]
@@ -35,19 +116,5 @@ docker build -t cppwfs/failtasknbp .
 
 [source,shell,indent=2]
 ----
-docker run cppwfs/failtasknbp run.id\(long\)=1
-----
-
-== Build Docker image (build pack) :
-
-[source,shell,indent=2]
-----
-./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=cppwfs/failtask
-----
-
-== Run  Docker image (build pack) :
-
-[source,shell,indent=2]
-----
-docker run cppwfs/failtask run.id\(long\)=1
+docker run cppwfs/failtask:2.2.0 --xxx1=ddd1 --foo=\\\${bar}-\\\${jee} --xxx2=ddd2
 ----

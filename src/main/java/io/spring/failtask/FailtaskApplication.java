@@ -21,8 +21,9 @@ public class FailtaskApplication {
 		return new ApplicationRunner() {
 			@Override
 			public void run(ApplicationArguments args) throws Exception {
-				System.out.println("Failing app should fail now but we decided against it :-D");
-//				throw new IllegalArgumentException("No Task For You");
+				for (String arg : args.getSourceArgs()) {
+					System.out.println("ARG ==>"  + arg);
+				}
 			}
 		};
 	}
