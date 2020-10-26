@@ -89,7 +89,7 @@ dataflow:>task execution status --id 311
 ║External      │mytaskdef-yg3e5d5w14                                                                                                                                                                                                                      ║
 ║Execution Id  │
 ----
-NOTE: That while dataflow sends the `management.metrics.tags.application` as a property it gets converted to a command line arg that is not accepted by the application being run.   This is because data flow by default uses the entrypoint `exec` wthich moves all properties to commandline args.
+NOTE: That while dataflow sends the `management.metrics.tags.application` as a property it gets converted to a command line arg that is not accepted by the application being run.   This is because data flow by default uses the entrypoint `exec` which moves all properties to commandline args.  Meaning the CLI argument for `management.metrics.tags.application` is empty.
 
 
 
